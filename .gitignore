@@ -1,0 +1,6 @@
+venv
+.env
+data_crawl/
+*.json
+data_craw_198409.json
+*.ipynb
