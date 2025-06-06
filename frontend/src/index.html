@@ -4,7 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Forest Search</title>
+    <title>Search Engine</title>
+    <link rel="icon" href="assets/search_icon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="main.css">
 </head>
 
@@ -18,13 +19,8 @@
     <div class="container">
         <!-- Header -->
         <header class="header">
-            <div class="menu-location">
-                <div class="menu-btn">☰</div>
-                <span>Mumbai 30°C</span>
-            </div>
-            <div class="user-profile">
-                <span>Ajinkya</span>
-                <div class="user-icon">👤</div>
+            <div class="logo-container">
+                <img src="assets/search_logo.png" alt="Logo" class="logo" width="300" height="300">
             </div>
         </header>
 
@@ -32,58 +28,60 @@
         <main class="main-content">
             <!-- Search Container -->
             <div class="search-container">
+
+                <!-- Search Model Selection -->
+                <div class="search-model">
+                    <select class="model-select">
+                        <option value="vsm">Vector Space Model (VSM)</option>
+                        <option value="bm25">BM25 Model</option>
+                    </select>
+                </div>
+
+                <!-- Search Input -->
                 <div class="search-box">
                     <div class="search-icon">🔍</div>
                     <input type="text" class="search-input" placeholder="Search Here...">
                     <div class="search-actions">
-                        <button class="search-btn">🎤</button>
-                        <button class="search-btn">📷</button>
+                        <button class="search-btn">
+                            <img src="assets/search.png" alt="Search Icon" class="search-icon-img" width="30" height="30">
+                        </button>
                     </div>
-                </div>
-                <div class="language-selector">
-                    <button class="language-btn">Choose your language... ⋯</button>
                 </div>
             </div>
 
             <!-- Quote Section -->
             <div class="quote-section">
                 <p class="quote-text">
-                    "Look up at the stars and not down at your feet. Try to make sense of what you see, and wonder about what makes the universe exist. Be curious."
+                    "Công cụ dùng 2 model là Vector space model (VSM) và BM25 model giúp tìm kiếm hơn 140 000 bài báo trên Kênh 14. Bao gồm tiêu đề, miêu tả, nội dung và link bài báo đó với xếp hạng độ liên quan từ trên xuống thấp."
                 </p>
+            </div>
+
+            <!-- Results Section -->
+            <!-- Place this after the quote-section if you want it in HTML -->
+            <div class="results-section" style="display: none;">
+                <div class="results-header">
+                    <h2 class="results-title">
+                        <img src="assets/evaluation.png" alt="Evaluation Icon" class="Eval-icon-img" width="30" height="30">
+                        Top 5 Search Results
+                    </h2>
+                    <button class="delete-btn">
+                        <img src="assets/delete.png" alt="Delete Icon" class="delete-icon-img" width="30" height="30">
+                    </button>
+                </div>
+                <div class="results-list">
+                    <!-- Results will be dynamically inserted here -->
+                </div>
             </div>
         </main>
 
-        <!-- Bottom Navigation -->
-        <nav class="bottom-nav">
-            <div class="nav-links">
-                <a href="#" class="nav-link">My Feed</a>
-                <a href="#" class="nav-link">Gaming</a>
-                <a href="#" class="nav-link">Coronavirus</a>
-                <a href="#" class="nav-link">Play</a>
-                <a href="#" class="nav-link">News</a>
-                <a href="#" class="nav-link">Videos</a>
-                <a href="#" class="nav-link">Weather</a>
-                <a href="#" class="nav-link">Watch</a>
-                <a href="#" class="nav-link">Entertainment</a>
-            </div>
-        </nav>
+    </div>
 
-        <!-- Side Panels -->
-        <div class="side-panel left">
-            <div class="panel-btn">📷</div>
-            <div class="panel-btn">💬</div>
-            <div class="panel-btn">📺</div>
-            <div class="panel-btn">📌</div>
-            <div class="panel-btn">➕</div>
-        </div>
-
-        <div class="side-panel right">
-            <div class="panel-btn">⚙️</div>
-            <div class="panel-btn">🔔</div>
-            <div class="panel-btn">✉️</div>
-            <div class="panel-btn">🖼️</div>
-            <div class="panel-btn">➕</div>
-        </div>
+    <!-- Custom Alert Modal -->
+    <div id="custom-alert" class="custom-alert">
+    <div class="custom-alert-content">
+        <span id="custom-alert-message"></span>
+        <button id="custom-alert-close">OK</button>
+    </div>
     </div>
 
     <script src="main.js"></script>
