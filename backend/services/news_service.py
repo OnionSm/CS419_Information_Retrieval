@@ -31,8 +31,8 @@ async def create_single_news_async(news: News):
         result = news_collection.insert_one(news_data)
         inserted_news = news_collection.find_one({"_id": result.inserted_id})
         if not inserted_news:
-             raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
-                                 detail="Failed to retrieve inserted news item.")
+            raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
+                                 detail="Failed to retrieve inserted new news.")
         inserted_news['id'] = str(inserted_news['_id'])
         del inserted_news['_id'] 
         print(f"Đã thêm tin tức thành công với _id: {result.inserted_id}")
@@ -81,9 +81,8 @@ async def create_multi_news_async(list_news: List[News]):
         result = news_collection.insert_many(documents_to_insert)
         inserted_ids = [str(obj_id) for obj_id in result.inserted_ids]
 
-        print(f"Đã thêm thành công {len(inserted_ids)} tin tức.")
         return {
-            "message": f"Đã thêm thành công {len(inserted_ids)} tin tức.",
+            "message": f"Insert {len(inserted_ids)} news completely.",
             "inserted_ids": inserted_ids
         }
 

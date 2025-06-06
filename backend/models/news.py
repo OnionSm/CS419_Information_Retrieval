@@ -6,5 +6,12 @@ class News(BaseModel):
     title: str
     description: str
     content: str
+    token: List[str]
     link: str
 
+class NewsRespone(BaseModel):
+    title: str
+    description: str
+    content: str
+    link: str
+    score: str

@@ -3,6 +3,7 @@ from typing import Optional, List
 
 class Term(BaseModel):
     id: str
-    term: str
-    related_docs: List[int] = []
+    term_name: str
+    idf: int
+    related_docs: List[str] = []
 
