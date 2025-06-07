@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException, Depends, APIRouter, status
 from typing import List
-from models.news import News
+from models.news import News, NewsInput, NewsRespone
 from pymongo.database import Database
 from services import news_service
 
@@ -10,11 +10,11 @@ router = APIRouter(
     responses={404: {"description": "Not found"}},
 )
 
-@router.post("/single", response_model=News, status_code=status.HTTP_201_CREATED)
-async def create_single_news(news: News) -> News:
+@router.post("/single", response_model=NewsRespone, status_code=status.HTTP_201_CREATED)
+async def create_single_news(news: NewsInput) -> NewsRespone:
     try:
         created_news_data_dict = await news_service.create_single_news_async(news)
-        return News(**created_news_data_dict)
+        return NewsRespone(**created_news_data_dict)
     except HTTPException as e:
         raise e
     except Exception as e:
