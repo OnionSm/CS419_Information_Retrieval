@@ -1,9 +1,10 @@
-from typing import List, Optional
+from typing import List, Dict, Any, Optional
 from models.term import Term
 from ..database import client, db
 from fastapi import HTTPException, status
 from pymongo.errors import PyMongoError, DuplicateKeyError
 from bson import ObjectId 
+from models.batch_term import BatchTerm
 
 async def create_single_term_async(term: Term) -> Term:
     if db is None:
@@ -91,7 +92,7 @@ async def get_terms_data_by_id_async(term_id: str):
                             detail=f"Lỗi không mong muốn khi lấy tin tức theo ID: {e}")
 
 
-async def get_term_data_by_name_async(term_name: str):
+async def get_term_data_by_name_async(term_name: str) -> Term:
     if db is None:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
                             detail="Database connection not established.")
@@ -109,7 +110,7 @@ async def get_term_data_by_name_async(term_name: str):
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                             detail=f"Lỗi không mong muốn khi lấy tin tức theo ID: {e}")
-
+        
 
 async def update_full_term_async(term_id : str, term_data: Term):
     if db is None:
@@ -196,3 +197,24 @@ async def add_docs_to_related_docs(term_id: str, list_docs: List[str]):
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                             detail=f"Lỗi không mong muốn khi cập nhật tin tức: {e}")
+    
+def batch_terms_to_map(batch_terms_list: List[BatchTerm]) -> Dict[str, Dict[str, Any]]:
+    """
+    Chuyển đổi một list các đối tượng BatchTerm thành một dictionary.
+
+    Args:
+        batch_terms_list (List[BatchTerm]): Một list chứa các đối tượng BatchTerm.
+
+    Returns:
+        Dict[str, Dict[str, Any]]: Một dictionary nơi key là term_name (str)
+                                   và value là một dictionary chứa id, count_docs, và idf.
+    """
+    term_map = {
+        term.term_name: {
+            "id": term.id,
+            "count_docs": term.count_docs,
+            "idf": term.idf
+        }
+        for term in batch_terms_list
+    }
+    return term_map
