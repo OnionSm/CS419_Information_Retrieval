@@ -57,7 +57,16 @@ document.addEventListener('DOMContentLoaded', function() {
     const mainSection = document.querySelector('.main-content');
     const resultsList = document.querySelector('.results-list');
     const deleteBtn = document.querySelector('.delete-btn');
+    const rankingRange = document.getElementById('ranking-range');
+    const rankingValue = document.getElementById('ranking-value');
+    const rankingValueResult = document.querySelector('.ranking-value');
 
+
+    rankingRange.addEventListener('input', function() {
+        rankingValue.textContent = rankingRange.value;
+    });
+
+    // Alert box elements
     function showCustomAlert(message) {
         const alertBox = document.getElementById('custom-alert');
         const alertMsg = document.getElementById('custom-alert-message');
@@ -97,6 +106,7 @@ document.addEventListener('DOMContentLoaded', function() {
             `;
             resultsList.appendChild(resultItem);
         })
+        rankingValueResult.textContent = rankingRange.value;
     }
 
 
