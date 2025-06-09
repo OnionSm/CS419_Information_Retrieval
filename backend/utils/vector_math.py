@@ -1,5 +1,6 @@
 from typing import List
 import numpy as np
+import heapq
 
 async def dot_product(query: List[float], list_docs: List[List[float]]) -> np.ndarray:
     """
@@ -33,3 +34,16 @@ async def dot_product(query: List[float], list_docs: List[List[float]]) -> np.nd
     dot_products_array = np.dot(np_docs, np_query)
 
     return dot_products_array
+
+
+
+def get_n_largest_indices_and_values(distances, n):
+    """
+    Lấy ra n chỉ mục và giá trị lớn nhất từ một danh sách các khoảng cách.
+    Sử dụng heapq để tối ưu hiệu suất.
+    """
+    if not isinstance(distances, list) or not distances or n <= 0:
+        return []
+    top_n = heapq.nlargest(n, enumerate(distances), key=lambda x: x[1])
+    # Đổi vị trí tuple thành (giá trị, chỉ mục) 
+    return [(value, index) for index, value in top_n]

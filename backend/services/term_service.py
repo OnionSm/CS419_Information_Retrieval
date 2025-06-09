@@ -1,12 +1,12 @@
 from typing import List, Dict, Any, Optional
 from models.term import Term
-from ..database import client, db
 from fastapi import HTTPException, status
 from pymongo.errors import PyMongoError, DuplicateKeyError
 from bson import ObjectId 
 from models.batch_term import BatchTerm
 
 async def create_single_term_async(term: Term) -> Term:
+    from services.database import client, db
     if db is None:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
                             detail="Database connection not established.")
@@ -36,6 +36,7 @@ async def create_single_term_async(term: Term) -> Term:
     
 
 async def create_multi_term_async(list_term: List[Term]):
+    from services.database import client, db
     if db is None:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
                             detail="Database connection not established.")
@@ -68,6 +69,7 @@ async def create_multi_term_async(list_term: List[Term]):
 
 
 async def get_terms_data_by_id_async(term_id: str):
+    from services.database import client, db
     if db is None:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
                             detail="Database connection not established.")
@@ -93,6 +95,7 @@ async def get_terms_data_by_id_async(term_id: str):
 
 
 async def get_term_data_by_name_async(term_name: str) -> Term:
+    from services.database import client, db
     if db is None:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
                             detail="Database connection not established.")
@@ -113,6 +116,7 @@ async def get_term_data_by_name_async(term_name: str) -> Term:
         
 
 async def update_full_term_async(term_id : str, term_data: Term):
+    from services.database import client, db
     if db is None:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
                             detail="Database connection not established.")
@@ -157,6 +161,7 @@ async def update_full_term_async(term_id : str, term_data: Term):
     
 
 async def add_docs_to_related_docs(term_id: str, list_docs: List[str]):
+    from services.database import client, db
     if db is None:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
                             detail="Database connection not established.")
@@ -210,10 +215,11 @@ def batch_terms_to_map(batch_terms_list: List[BatchTerm]) -> Dict[str, Dict[str,
                                    và value là một dictionary chứa id, count_docs, và idf.
     """
     term_map = {
-        term.term_name: {
-            "id": term.id,
-            "count_docs": term.count_docs,
-            "idf": term.idf
+        term["term_name"]: {
+            "id": term["id"],
+            "idx": term["idx"],
+            "count_docs": term["count_docs"],
+            "idf": term["idf"]
         }
         for term in batch_terms_list
     }

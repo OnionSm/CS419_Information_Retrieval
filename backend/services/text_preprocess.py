@@ -150,7 +150,7 @@ def remove_special_characters(text):
     return re.sub(r'[^a-zA-Z0-9À-ỹà-ỹ\s]', '', text)
 
 
-stop_word_file_path = 'vietnamese-stopwords.txt' 
+stop_word_file_path = "services/data/vietnamese-stopwords.txt" 
 with open(stop_word_file_path, 'r', encoding='utf-8') as f:
     content = f.read()
 list_stop_words = content.split("\n")

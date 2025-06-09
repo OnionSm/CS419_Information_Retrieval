@@ -1,13 +1,17 @@
 from typing import List, Dict, Any, Optional
 from models.term import Term
-from ..database import client, db
+
 from fastapi import HTTPException, status
 from pymongo.errors import PyMongoError, DuplicateKeyError
 from bson import ObjectId 
 from models.batch_term import BatchTerm
 from models.model_variable import ModelVariable
+import logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
-async def get_model_variable() -> ModelVariable:
+async def get_model_variable() -> Optional[ModelVariable]:
+    from services.database import client, db
     if db is None:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
                             detail="Database connection not established.")
@@ -16,9 +20,19 @@ async def get_model_variable() -> ModelVariable:
         setting = variable_collection.find_one({})
         if not setting:
             raise HTTPException(status_code=404, detail="Không tìm thấy cấu hình")
+        else: 
+            print(setting)
+        
+        # Xóa _id trước khi tạo object
         if "_id" in setting:
+            setting["id"] = str(setting["_id"])
             del setting["_id"]
-        return setting
+
+        logger.info(setting)
+            
+        
+        # Tạo ModelVariable object từ dict
+        return ModelVariable(**setting)
 
     except DuplicateKeyError as e:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT,

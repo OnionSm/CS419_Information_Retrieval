@@ -1,13 +1,11 @@
 from typing import List, Optional
 from models.news import News, NewsRespone, NewsInput
-from ..database import client, db
 from fastapi import HTTPException, status
 from pymongo.errors import PyMongoError, DuplicateKeyError
 from bson import ObjectId 
 from services import text_preprocess, embedding_service
-from backend import global_variable
 
-async def create_single_news_async(news_input: NewsInput) -> NewsRespone:
+async def create_single_news_async(news_input: NewsInput, title_multiply: int, description_multiply: int, content_multiply: int) -> NewsRespone:
     """
     Thêm một tin tức mới vào collection 'news' trong MongoDB.
 
@@ -21,6 +19,7 @@ async def create_single_news_async(news_input: NewsInput) -> NewsRespone:
         HTTPException: Nếu có lỗi xảy ra trong quá trình chèn dữ liệu vào database
                        (ví dụ: lỗi kết nối, lỗi trùng lặp, lỗi chung).
     """
+    from services.database import client, db
     if db is None:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, 
                             detail="Database connection not established.")
@@ -30,7 +29,7 @@ async def create_single_news_async(news_input: NewsInput) -> NewsRespone:
         if '_id' in news_data:
             del news_data['_id']
 
-        news: News = news_input_to_news(news_input)
+        news: News = news_input_to_news(news_input , title_multiply, description_multiply, content_multiply)
 
         result = news_collection.insert_one(news)
         inserted_news = news_collection.find_one({"_id": result.inserted_id})
@@ -50,7 +49,7 @@ async def create_single_news_async(news_input: NewsInput) -> NewsRespone:
                             detail=f"An unexpected error occurred: {e}")
 
 
-async def create_multi_news_async(list_news: List[NewsInput]):
+async def create_multi_news_async(list_news: List[NewsInput], title_multiply: int, description_multiply: int, content_multiply: int):
     """
     Thêm nhiều tin tức mới vào collection 'news' trong MongoDB.
 
@@ -64,6 +63,7 @@ async def create_multi_news_async(list_news: List[NewsInput]):
         HTTPException: Nếu có lỗi xảy ra trong quá trình chèn dữ liệu vào database
                        (ví dụ: lỗi kết nối, lỗi trùng lặp, lỗi chung).
     """
+    from services.database import client, db
     if db is None:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                             detail="Database connection not established.")
@@ -75,7 +75,7 @@ async def create_multi_news_async(list_news: List[NewsInput]):
         news_data = news_item.model_dump(by_alias=True, exclude_unset=True)
         if '_id' in news_data:
             del news_data['_id']
-        news: News = news_input_to_news(news_data)
+        news: News = news_input_to_news(news_data, title_multiply, description_multiply, content_multiply)
         documents_to_insert.append(news)
 
     try:
@@ -100,7 +100,7 @@ async def create_multi_news_async(list_news: List[NewsInput]):
                             detail=f"Một lỗi không mong muốn đã xảy ra: {e}")
 
 
-async def get_news_by_id_async(news_id: str) -> Optional[News]:
+async def get_news_by_id_async(news_id: ObjectId) -> Optional[News]:
     """
     Lấy một tin tức theo ID từ collection 'news'.
 
@@ -114,13 +114,14 @@ async def get_news_by_id_async(news_id: str) -> Optional[News]:
         HTTPException: Nếu database connection không được thiết lập, 
                        ID không hợp lệ, hoặc có lỗi database.
     """
+    from services.database import client, db
     if db is None:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                             detail="Database connection not established.")
 
     news_collection = db.news
     try:
-        obj_id = ObjectId(news_id)
+        obj_id = news_id
     except Exception:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, 
                             detail="ID tin tức không hợp lệ. Vui lòng cung cấp một ObjectId hợp lệ.")
@@ -151,6 +152,7 @@ async def get_news_by_link_async(link: str) -> Optional[News]:
     Raises:
         HTTPException: Nếu database connection không được thiết lập hoặc có lỗi database.
     """
+    from services.database import client, db
     if db is None:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                             detail="Database connection not established.")
@@ -273,16 +275,16 @@ async def get_news_by_link_async(link: str) -> Optional[News]:
 #         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
 #                             detail=f"Lỗi không mong muốn khi xóa tin tức: {e}")
     
-def news_input_to_news(news_input: NewsInput) -> News:
+def news_input_to_news(news_input: NewsInput, title_multiply: int, description_multiply: int, content_multiply: int) -> News:
     news = {}
     news["title"] = news_input["title"]
     news["description"] = news_input["description"]
     news["content"] = news_input["content"]
     news["link"] = news_input["link"]
 
-    full_text = (news_input["title"] + " ") * global_variable.model_variale["title_multiply"] \
-            + " " + (news_input["description"] + " ") * global_variable.model_variale["description_multiply"] \
-            + " " + (news_input["content"] + " ") * global_variable.model_variale["content_multiply"]
+    full_text = (news_input["title"] + " ") * title_multiply \
+            + " " + (news_input["description"] + " ") *description_multiply \
+            + " " + (news_input["content"] + " ") * content_multiply
     tokens = text_preprocess.process_text(full_text)
     query_tf = embedding_service.compute_tf(tokens)
     query_tf = embedding_service.tf_map_to_term_frequency(query_tf)

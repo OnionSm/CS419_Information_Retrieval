@@ -2,7 +2,7 @@ import math
 from typing import List,  Dict
 from models.batch_term import BatchTerm
 from models.term import TermFrequency
-from numpy import np 
+import numpy as np
 
 def compute_tf(doc_tokens):
     tf = {}
@@ -12,7 +12,7 @@ def compute_tf(doc_tokens):
         tf[word] /= len(doc_tokens)
     return tf
 
-def tf_map_to_term_frequency(tf_map: Dict[str, int]) -> List[TermFrequency]:
+def tf_map_to_term_frequency(tf_map: Dict[str, float]) -> List[TermFrequency]:
     """
     Chuyển đổi một map tần suất từ thành list các đối tượng TermFrequency.
 
@@ -92,14 +92,13 @@ def compute_idf_batch(batch_terms: List[BatchTerm], all_docs_quantity: int) -> L
 def compute_tfidf_vector_batch(term_frequence: List[TermFrequency], batch_terms_map, vector_len):
     vector = [0] * vector_len
     for term in term_frequence:
-        term_name = term.get("term_name")
-        term_freq = term.get("frequency")
+        term_name = term.term_name
+        term_freq = term.frequency
         if not term_name or term_freq is None:
             # Có thể log lỗi hoặc bỏ qua nếu dữ liệu không hợp lệ
             continue
         if term_name in batch_terms_map:
             term_info = batch_terms_map[term_name]
-            
             idx = term_info.get("idx")
             idf = term_info.get("idf")
             if idx is not None and idf is not None and isinstance(idx, int) and 0 <= idx < vector_len:
@@ -110,8 +109,8 @@ def compute_tfidf_vector_batch(term_frequence: List[TermFrequency], batch_terms_
 def compute_bm25_vector_batch(term_frequence: List[TermFrequency], doc_len: int, batch_terms_map, vector_len, b, k, avgdl):
     vector = [0] * vector_len
     for term in term_frequence:
-        term_name = term.get("term_name")
-        term_freq = term.get("frequency")
+        term_name = term.term_name
+        term_freq = term.frequency
         if not term_name or term_freq is None:
             # Có thể log lỗi hoặc bỏ qua nếu dữ liệu không hợp lệ
             continue
