@@ -5,7 +5,7 @@ import logging
 from dotenv import load_dotenv
 from services import database
 from controllers import news_controller, query_controller
-
+from fastapi.middleware.cors import CORSMiddleware
 # Load environment variables
 load_dotenv()
 
@@ -57,6 +57,16 @@ app = FastAPI(
     version="1.0.0",
     lifespan=lifespan
 )
+
+# Cho phép tất cả origins - chỉ dùng development
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Cho phép mọi domain/IP
+    allow_credentials=False,  # Phải False khi dùng "*"
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 # API test đơn giản
 @app.get("/")

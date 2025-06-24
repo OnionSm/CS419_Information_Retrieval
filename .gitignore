@@ -4,3 +4,9 @@ data_crawl/
 *.json
 data_craw_198409.json
 *.ipynb
+*__pycache__
+final_data
+mongo_data
+data_json
+checkpoint
+utils

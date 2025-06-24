@@ -1,0 +1,32 @@
+# Web Framework & API
+fastapi==0.115.12
+uvicorn[standard]==0.34.3
+
+# Data Processing & Validation
+pydantic==2.11.5
+pydantic-settings==2.9.1
+numpy==2.2.6
+pandas==2.2.3
+
+# Machine Learning & Text Processing
+scikit-learn==1.6.1
+nltk==3.9.1
+underthesea==6.8.4
+
+# Database & Caching
+aioredis==2.0.1
+pymongo==4.13.0
+
+# HTTP Client & Utilities
+httpx==0.28.1
+requests==2.32.3
+python-dotenv==1.1.0
+python-multipart==0.0.20
+
+# Text Processing & Web Scraping
+beautifulsoup4==4.13.4
+regex==2024.11.6
+
+# Performance & Async
+uvloop==0.21.0
+orjson==3.10.18
